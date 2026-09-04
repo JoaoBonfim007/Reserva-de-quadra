@@ -343,7 +343,7 @@
         const carregarAgenda = async () => {
             try {
                 // Dispara o garçom para a rota GET
-                const resposta = await fetch('http://localhost:3000/agendamentos');
+                const resposta = await fetch('https://reserva-de-quadra.onrender.com/agendamentos');
                 const quadrasReservadas = await resposta.json();
                 
                 // Limpa a div antes de desenhar os novos cards
@@ -409,14 +409,14 @@
                 const idReserva = evento.target.getAttribute('data-id');
                 const confirmacao = confirm("Tem certeza que deseja deletar este agendamento?");
                 if(confirmacao){
-                    await fetch(`http://localhost:3000/agendamentos/${idReserva}`,{method:'DELETE'});
+                    await fetch(`https://reserva-de-quadra.onrender.com/agendamentos/${idReserva}`,{method:'DELETE'});
                     carregarAgenda();
                 }
             }
             else if(evento.target.classList.contains('btn-editar')){
                 const idReserva = evento.target.getAttribute('data-id');
                 idParaEdicao = idReserva;
-                const resposta = await fetch(`http://localhost:3000/agendamentos/${idReserva}`);
+                const resposta = await fetch(`https://reserva-de-quadra.onrender.com/agendamentos/${idReserva}`);
                 const dados = await resposta.json();
                 document.querySelector('#jogador').value = dados.jogador;
                 document.querySelector('#quantidadeDePessoas').value = dados.quantidadeDePessoas;
@@ -471,14 +471,14 @@
 
             try {
                 if(idParaEdicao === null){
-                   const resposta = await fetch('http://localhost:3000/agendar', {
+                   const resposta = await fetch('https://reserva-de-quadra.onrender.com/agendar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(novaReserva)
                 });
                 if(resposta.ok) alert('Sucesso! Quadra Reservada!');
                 }else{
-                    const resposta = await fetch(`http://localhost:3000/agendamentos/${idParaEdicao}`, {
+                    const resposta = await fetch(`https://reserva-de-quadra.onrender.com/agendamentos/${idParaEdicao}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(novaReserva)
