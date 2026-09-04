@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchPoint - Gestão de Quadras</title>
+    
+    <style>
+        /* =========================================
+           RESET E ESTILOS GERAIS
+           ========================================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        body {
+            background-color: #eef2f5;
+            color: #2c3e50;
+            padding: 40px 20px;
+        }
+
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+
+        .header h1 {
+            color: #e67e22;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 2.5rem;
+        }
+
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+
+        /* Container Principal: Divide a tela em duas colunas no Desktop */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+        /* =========================================
+           PAINEL 1: FORMULÁRIO DE AGENDAMENTO
+           ========================================= */
+        .painel-form {
+            flex: 1;
+            min-width: 350px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            align-self: flex-start;
+        }
+
+
+        .painel-form h2 {
+            margin-bottom: 25px;
+            color: #2980b9;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+
+        /* Grid para alinhar os inputs lado a lado */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+
+        .grupo-input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+
+        .grupo-input.full-width {
+            grid-column: 1 / -1; /* Ocupa a linha inteira */
+        }
+
+
+        .grupo-input label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #34495e;
+            font-size: 0.9rem;
+        }
+
+
+        .grupo-input input, .grupo-input select {
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #f9fbfd;
+            transition: border-color 0.3s;
+        }
+
+
+        .grupo-input input:focus, .grupo-input select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+
+        .grupo-checkbox {
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            background-color: #f3f9f4;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #d5e8d4;
+        }
+
+
+        .grupo-checkbox input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+
+        button.btn-submit {
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+
+        button.btn-submit:hover {
+            background-color: #2ecc71;
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================
+           PAINEL 2: LISTA DE QUADRAS (CARDS)
+           ========================================= */
+        .painel-lista {
+            flex: 1.5;
+            min-width: 350px;
+        }
+
+
+        .painel-lista h2 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+
+        #lista-quadras {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+
+        /* Estilo de cada "Card" de reserva */
+        .card-reserva {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 6px solid #3498db;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+
+        .card-reserva .data-badge {
+            align-self: flex-start;
+            background-color: #e8f4f8;
+            color: #2980b9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+
+        .card-reserva h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+
+
+        .card-reserva p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+
+        .badge-bola {
+            display: inline-block;
+            background-color: #f1c40f;
+            color: #8e44ad;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .acoes-card{
+            display: flex;
+            gap: 10px;
+            margin-top:15px;
+        }
+        .btn-editar, .btn-cancelar{
+            flex: 1;
+            padding: 10px;
+            border:none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            transition: 0.2s;
+        }
+        .btn-editar{background-color: #087234;}
+        .btn-editar:hover{background-color: #018d3b;}
+        .btn-cancelar{background-color: #e74c3c;}
+        .btn-cancelar:hover{background-color: #c0392b;}
+        #btn-cancelar-edicao{
+            display: none; text-align: center; margin-top: 15px; color: #e74c3c;cursor: pointer; text-decoration: underline; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="header">
+        <h1>🏐 Arena MatchPoint</h1>
+        <p>Sistema Oficial de Agendamento Full-Stack</p>
+    </div>
+
+
+    <div class="container">
+        <!-- ÁREA 1: FORMULÁRIO (POST) -->
+        <div class="painel-form">
+            <h2 id="titulo-form">Nova Reserva</h2>
+            
+            <form id="form-agendamento">
+                
+                <div class="grupo-input full-width">
+                    <label for="jogador">Nome do Responsável:</label>
+                    <input type="text" id="jogador" placeholder="Ex: Caio Cesar" required>
+                </div>
+
+
+                <div class="form-grid">
+                    <div class="grupo-input">
+                        <label for="dataAluguel">Data do Jogo:</label>
+                        <input type="date" id="dataAluguel" required>
+                    </div>
+
+
+                    <div class="grupo-input">
+                        <label for="quadra">Qual Quadra?</label>
+                        <select id="quadra" required>
+                            <option value="1">Quadra 1 (Areia)</option>
+                            <option value="2">Quadra 2 (Saibro)</option>
+                            <option value="3">Quadra 3 (Grama)</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="grupo-input">
+                    <label for="quantidadeDePessoas">Quantidade de Pessoas:</label>
+                    <input type="number" id="quantidadeDePessoas" min="2" max="20" placeholder="Ex: 4" required>
+                </div>
+
+
+                <div class="grupo-input grupo-checkbox full-width">
+                    <input type="checkbox" id="bolaAlugada">
+                    <label for="bolaAlugada">Incluir Aluguel de Bola Oficial (+ R$ 15,00)</label>
+                </div>
+
+
+                <button type="submit" class="btn-submit">Confirmar Agendamento</button>
+                <p id="btn-cancelar-edicao">Cancelar edição</p>
+            </form>
+        </div>
+
+
+        <!-- ÁREA 2: LISTAGEM (GET) -->
+        <div class="painel-lista">
+            <h2>📅 Próximos Jogos</h2>
+            
+            <div id="lista-quadras">
+                <div class="card-reserva" style="border-left-color: #bdc3c7;">
+                    <p>Aguardando conexão com o Servidor Node.js...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================================
+         JAVASCRIPT EMBUTIDO (Lógica do Front-End)
+         ========================================= -->
+    <script>
+        const btnSubmit = document.querySelector('.btn-submit');
+        const tituloForm = document.querySelector('#titulo-form');
+        const btnCancelarEdicao = document.querySelector('#btn-cancelar-edicao');
+        let idParaEdicao = null;
+
+
+        const formulario = document.querySelector('#form-agendamento');
+        const listaHtml = document.querySelector('#lista-quadras');
+
+
+        // ==========================================
+        // 1. FUNÇÃO READ (Buscando dados do Back-End)
+        // ==========================================
+        const carregarAgenda = async () => {
+            try {
+                // Dispara o garçom para a rota GET
+                const resposta = await fetch('http://localhost:3000/agendamentos');
+                const quadrasReservadas = await resposta.json();
+                
+                // Limpa a div antes de desenhar os novos cards
+                listaHtml.innerHTML = ''; 
+
+
+                // Varre o Array devolvido pelo Banco de Dados
+                quadrasReservadas.forEach((reserva) => {
+                    
+                    // Formatando a data que veio do banco para o padrão brasileiro
+                    let dataFormatada = "Data a definir";
+                    if(reserva.dataAluguel) {
+                        const dataObj = new Date(reserva.dataAluguel);
+                        dataFormatada = dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); 
+                    }
+
+
+                    // Criando o Card visual para cada reserva
+                    const card = document.createElement('div');
+                    card.classList.add('card-reserva');
+                    
+                    card.innerHTML = `
+                        <span class="data-badge">📅 ${dataFormatada}</span>
+                        <h3>Quadra ${reserva.quadra}</h3>
+                        <p><strong>Responsável:</strong> ${reserva.jogador}</p>
+                        <p><strong>Atletas:</strong> ${reserva.quantidadeDePessoas} pessoas</p>
+                    `;
+
+
+                    // Lógica visual: Se a pessoa alugou a bola, injeta a etiqueta no card
+                    if (reserva.bolaAlugada) {
+                        card.innerHTML += `<span class="badge-bola">🏐 Bola Inclusa</span>`;
+                    }
+                    card.innerHTML += `
+                    <hr style="margin: 15px 0 10px 0; border-top: 1px solid #eee;">
+                    <div class="acoes-card">
+                        <button class="btn-editar" data-id="${reserva._id}">✏️Editar</button>
+                        <button class="btn-cancelar" data-id="${reserva._id}">❌Cancelar</button>
+                        </div>
+                    `
+
+
+                    // Gruda o card na tela
+                    listaHtml.appendChild(card);
+                });
+
+
+            } catch (erro) {
+                console.error("Erro na conexão:", erro);
+                listaHtml.innerHTML = `
+                    <div class="card-reserva" style="border-left-color: #e74c3c;">
+                        <h3>Erro de Conexão</h3>
+                        <p>O servidor Node.js está ligado?</p>
+                    </div>
+                `;
+            }
+        };
+
+
+        listaHtml.addEventListener('click', async(evento)=>{
+            //DELETAR
+            if(evento.target.classList.contains('btn-cancelar')){
+                const idReserva = evento.target.getAttribute('data-id');
+                const confirmacao = confirm("Tem certeza que deseja deletar este agendamento?");
+                if(confirmacao){
+                    await fetch(`http://localhost:3000/agendamentos/${idReserva}`,{method:'DELETE'});
+                    carregarAgenda();
+                }
+            }
+            else if(evento.target.classList.contains('btn-editar')){
+                const idReserva = evento.target.getAttribute('data-id');
+                idParaEdicao = idReserva;
+                const resposta = await fetch(`http://localhost:3000/agendamentos/${idReserva}`);
+                const dados = await resposta.json();
+                document.querySelector('#jogador').value = dados.jogador;
+                document.querySelector('#quantidadeDePessoas').value = dados.quantidadeDePessoas;
+                document.querySelector('#quadra').value = dados.quadra;
+                document.querySelector('#bolaAlugada').checked = dados.bolaAlugada;
+                if(dados.dataAluguel){
+                    document.querySelector('#dataAluguel').value = dados.dataAluguel.split('T')[0]; // Ajusta a data para o formato YYYY-MM-DD
+                }
+                tituloForm.textContent = "Editando a Reserva";
+                btnSubmit.textContent = "Atualizar reserva";
+                btnSubmit.style.backgroundColor = "#f39c12";
+                btnCancelarEdicao.style.display = "block";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+        const resetarFormulario = () => {
+            formulario.reset();
+            idParaEdicao = null;
+            tituloForm.textContent = "Nova Reserva";
+            btnSubmit.textContent = "Confirmar Agendamento";
+            btnSubmit.style.backgroundColor = "#27ae60";
+            btnCancelarEdicao.style.display = "none";
+        }
+        btnCancelarEdicao.addEventListener('click', resetarFormulario);
+
+
+        // ==========================================
+        // 2. FUNÇÃO CREATE (Enviando dados para o Back-End)
+        // ==========================================
+        formulario.addEventListener('submit', async (evento) => {
+            // Evita que a página recarregue ao clicar em enviar
+            evento.preventDefault(); 
+
+
+            // Capturando os valores digitados pelo usuário
+            const jogadorInput = document.querySelector('#jogador').value;
+            const dataInput = document.querySelector('#dataAluguel').value;
+            const quadraInput = Number(document.querySelector('#quadra').value);
+            const pessoasInput = Number(document.querySelector('#quantidadeDePessoas').value);
+            const bolaInput = document.querySelector('#bolaAlugada').checked;
+
+
+            // Montando a encomenda JSON EXATAMENTE igual ao Schema do Mongoose
+            const novaReserva = {
+                jogador: jogadorInput,
+                quantidadeDePessoas: pessoasInput,
+                bolaAlugada: bolaInput,
+                quadra: quadraInput,
+                dataAluguel: dataInput
+            };
+
+
+            try {
+                if(idParaEdicao === null){
+                   const resposta = await fetch('http://localhost:3000/agendar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novaReserva)
+                });
+                if(resposta.ok) alert('Sucesso! Quadra Reservada!');
+                }else{
+                    const resposta = await fetch(`http://localhost:3000/agendamentos/${idParaEdicao}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(novaReserva)
+                    });
+                   if(resposta.ok) alert('Sucesso! Reserva Atualizada!');
+            }
+            resetarFormulario();
+            carregarAgenda();
+            } catch (erro) {
+                console.error("Erro na requisição:", erro);
+                alert("Erro servidor inacessível.");
+
+            }
+        })
+
+
+        // ==========================================
+        // 3. INICIALIZAÇÃO
+        // ==========================================
+        // Busca os dados no banco assim que o cliente abre o site!
+        carregarAgenda();
+    </script>
+</body>
+</html>
